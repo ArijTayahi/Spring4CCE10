@@ -9,7 +9,9 @@ import java.time.LocalDate;
 @Table(name = "paiement")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class Paiement {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPaiement;
 
     @Column(nullable = false, precision = 10, scale = 2)
@@ -21,4 +23,14 @@ public class Paiement {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private ModePaiement modePaiement;
+
+    // ── Relations ──────────────────────────────────────────────────────────
+
+    /**
+     * Un paiement règle un contrat précis (côté propriétaire).
+     * Génère la colonne FK idContrat dans la table paiement.
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idContrat", nullable = false, unique = true)
+    private Contrat contrat;
 }
