@@ -1,14 +1,10 @@
--- ============================================================
--- AutoLoc – Création complète du schéma avec relations FK
--- phpMyAdmin > autoloc_db > onglet SQL > coller > Exécuter
--- ============================================================
-
+DROP DATABASE IF EXISTS autoloc_db;
+CREATE DATABASE autoloc_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE autoloc_db;
 
 SET FOREIGN_KEY_CHECKS = 0;
 
--- ── 1. agence ─────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS agence (
+CREATE TABLE agence (
     idAgence  BIGINT       NOT NULL AUTO_INCREMENT,
     nom       VARCHAR(100) NOT NULL,
     ville     VARCHAR(50)  NOT NULL,
@@ -17,8 +13,7 @@ CREATE TABLE IF NOT EXISTS agence (
     PRIMARY KEY (idAgence)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ── 2. client ─────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS client (
+CREATE TABLE client (
     idClient        BIGINT       NOT NULL AUTO_INCREMENT,
     nom             VARCHAR(50)  NOT NULL,
     prenom          VARCHAR(50)  NOT NULL,
@@ -27,20 +22,18 @@ CREATE TABLE IF NOT EXISTS client (
     numPermis       VARCHAR(30)  NOT NULL,
     dateInscription DATE         NOT NULL,
     PRIMARY KEY (idClient),
-    UNIQUE KEY uq_client_email    (email),
+    UNIQUE KEY uq_client_email     (email),
     UNIQUE KEY uq_client_numpermis (numPermis)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ── 3. equipement ─────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS equipement (
+CREATE TABLE equipement (
     idEquipement BIGINT       NOT NULL AUTO_INCREMENT,
     libelle      VARCHAR(100) NOT NULL,
     PRIMARY KEY (idEquipement),
     UNIQUE KEY uq_equipement_libelle (libelle)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ── 4. vehicule (FK → agence) ─────────────────────────────
-CREATE TABLE IF NOT EXISTS vehicule (
+CREATE TABLE vehicule (
     idVehicule      BIGINT        NOT NULL AUTO_INCREMENT,
     immatriculation VARCHAR(20)   NOT NULL,
     marque          VARCHAR(50)   NOT NULL,
@@ -54,8 +47,7 @@ CREATE TABLE IF NOT EXISTS vehicule (
     CONSTRAINT fk_vehicule_agence FOREIGN KEY (idAgence) REFERENCES agence (idAgence)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ── 5. employe (FK → agence) ──────────────────────────────
-CREATE TABLE IF NOT EXISTS employe (
+CREATE TABLE employe (
     idEmploye BIGINT      NOT NULL AUTO_INCREMENT,
     nom       VARCHAR(50) NOT NULL,
     prenom    VARCHAR(50) NOT NULL,
@@ -65,8 +57,7 @@ CREATE TABLE IF NOT EXISTS employe (
     CONSTRAINT fk_employe_agence FOREIGN KEY (idAgence) REFERENCES agence (idAgence)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ── 6. maintenance (FK → vehicule) ────────────────────────
-CREATE TABLE IF NOT EXISTS maintenance (
+CREATE TABLE maintenance (
     idMaintenance BIGINT       NOT NULL AUTO_INCREMENT,
     dateDebut     DATE         NOT NULL,
     dateFin       DATE,
@@ -76,8 +67,7 @@ CREATE TABLE IF NOT EXISTS maintenance (
     CONSTRAINT fk_maintenance_vehicule FOREIGN KEY (idVehicule) REFERENCES vehicule (idVehicule)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ── 7. vehicule_equipement (ManyToMany) ───────────────────
-CREATE TABLE IF NOT EXISTS vehicule_equipement (
+CREATE TABLE vehicule_equipement (
     idVehicule   BIGINT NOT NULL,
     idEquipement BIGINT NOT NULL,
     PRIMARY KEY (idVehicule, idEquipement),
@@ -85,8 +75,7 @@ CREATE TABLE IF NOT EXISTS vehicule_equipement (
     CONSTRAINT fk_ve_equipement FOREIGN KEY (idEquipement) REFERENCES equipement (idEquipement)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ── 8. reservation (FK → client, vehicule, employe) ───────
-CREATE TABLE IF NOT EXISTS reservation (
+CREATE TABLE reservation (
     idReservation BIGINT NOT NULL AUTO_INCREMENT,
     dateDebut     DATE   NOT NULL,
     dateFin       DATE   NOT NULL,
@@ -100,8 +89,7 @@ CREATE TABLE IF NOT EXISTS reservation (
     CONSTRAINT fk_reservation_employe  FOREIGN KEY (idEmploye)  REFERENCES employe  (idEmploye)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ── 9. contrat (FK → reservation, OneToOne) ───────────────
-CREATE TABLE IF NOT EXISTS contrat (
+CREATE TABLE contrat (
     idContrat     BIGINT        NOT NULL AUTO_INCREMENT,
     dateSignature DATE          NOT NULL,
     montantTotal  DECIMAL(10,2) NOT NULL,
@@ -112,8 +100,7 @@ CREATE TABLE IF NOT EXISTS contrat (
     CONSTRAINT fk_contrat_reservation FOREIGN KEY (idReservation) REFERENCES reservation (idReservation)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ── 10. paiement (FK → contrat, OneToOne) ─────────────────
-CREATE TABLE IF NOT EXISTS paiement (
+CREATE TABLE paiement (
     idPaiement   BIGINT        NOT NULL AUTO_INCREMENT,
     montant      DECIMAL(10,2) NOT NULL,
     datePaiement DATE          NOT NULL,
