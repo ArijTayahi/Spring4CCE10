@@ -8,6 +8,8 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "paiement")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@ToString(exclude = "contrat")
+@EqualsAndHashCode(exclude = "contrat")
 public class Paiement {
 
     @Id
@@ -27,10 +29,10 @@ public class Paiement {
     // ── Relations ──────────────────────────────────────────────────────────
 
     /**
-     * Un paiement règle un contrat précis (côté propriétaire).
-     * Génère la colonne FK idContrat dans la table paiement.
+     * Un paiement est rattaché à un contrat (côté propriétaire).
+     * Hibernate génère automatiquement la colonne FK dans la table paiement
+     * à partir du nom de l'attribut et de la PK référencée (ex. contrat_id_contrat).
      */
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idContrat", nullable = false, unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Contrat contrat;
 }

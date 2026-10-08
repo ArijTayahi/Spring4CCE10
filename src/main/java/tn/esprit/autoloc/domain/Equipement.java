@@ -2,7 +2,8 @@ package tn.esprit.autoloc.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "equipement")
@@ -22,8 +23,9 @@ public class Equipement {
 
     /**
      * Un équipement peut être associé à plusieurs véhicules (côté inverse).
-     * La table de jointure vehicule_equipement est gérée par Vehicule.
+     * mappedBy pointe vers l'attribut "equipements" déclaré dans Vehicule.
+     * Pas de cascade : les équipements sont partagés entre véhicules.
      */
     @ManyToMany(mappedBy = "equipements", fetch = FetchType.LAZY)
-    private List<Vehicule> vehicules;
+    private Set<Vehicule> vehicules = new HashSet<>();
 }

@@ -7,6 +7,8 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "maintenance")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@ToString(exclude = "vehicule")
+@EqualsAndHashCode(exclude = "vehicule")
 public class Maintenance {
 
     @Id
@@ -26,7 +28,8 @@ public class Maintenance {
 
     /**
      * Une opération de maintenance concerne un véhicule précis (côté propriétaire).
-     * Génère la colonne FK idVehicule dans la table maintenance.
+     * Hibernate génère la colonne FK idVehicule dans la table maintenance.
+     * Pas de cascade depuis ce côté : le véhicule gère la cascade PERSIST.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idVehicule", nullable = false)

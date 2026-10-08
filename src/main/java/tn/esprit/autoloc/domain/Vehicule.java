@@ -3,13 +3,16 @@ package tn.esprit.autoloc.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "vehicule")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
-@ToString(exclude = {"equipements", "maintenances"})
-@EqualsAndHashCode(exclude = {"equipements", "maintenances"})
+@ToString(exclude = {"agence", "equipements", "maintenances"})
+@EqualsAndHashCode(exclude = {"agence", "equipements", "maintenances"})
 public class Vehicule {
 
     @Id
@@ -38,14 +41,18 @@ public class Vehicule {
 
     // ── Relations ──────────────────────────────────────────────────────────
 
-    /** Un véhicule appartient à une agence (côté propriétaire). */
+    /**
+     * Un véhicule appartient à une agence (côté propriétaire).
+     * Hibernate génère la colonne FK idAgence dans la table vehicule.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idAgence", nullable = false)
+    @JoinColumn(name = "idAgence")
     private Agence agence;
 
     /**
-     * Un véhicule peut être équipé de plusieurs équipements optionnels.
-     * Côté propriétaire : la table de jointure est gérée ici.
+     * Un véhicule peut être équipé de plusieurs équipements (côté propriétaire).
+     * Utilisation d'un Set : les équipements sont partagés, l'ordre n'est pas garanti.
+     * Pas de cascade : les équipements sont des entités indépendantes et réutilisables.
      */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -53,9 +60,14 @@ public class Vehicule {
         joinColumns        = @JoinColumn(name = "idVehicule"),
         inverseJoinColumns = @JoinColumn(name = "idEquipement")
     )
-    private List<Equipement> equipements;
+    private Set<Equipement> equipements = new HashSet<>();
 
-    /** Un véhicule peut subir plusieurs opérations de maintenance. */
-    @OneToMany(mappedBy = "vehicule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Maintenance> maintenances;
+    /**
+     * Un véhicule peut subir plusieurs opérations de maintenance (côté inverse).
+     * cascade = PERSIST : créer un véhicule peut créer ses maintenances associées.
+     * Pas de REMOVE : une maintenance a une valeur historique et ne doit pas être
+     * supprimée en cascade.
+     */
+    @OneToMany(mappedBy = "vehicule", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    private List<Maintenance> maintenances = new ArrayList<>();
 }

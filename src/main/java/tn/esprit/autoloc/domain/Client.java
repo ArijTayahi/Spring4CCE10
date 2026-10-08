@@ -3,6 +3,7 @@ package tn.esprit.autoloc.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,7 +37,11 @@ public class Client {
 
     // ── Relations ──────────────────────────────────────────────────────────
 
-    /** Un client peut effectuer plusieurs réservations (côté inverse). */
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Reservation> reservations;
+    /**
+     * Un client peut effectuer plusieurs réservations (côté inverse).
+     * cascade = PERSIST : enregistrer un client enregistre ses nouvelles réservations.
+     * Pas de REMOVE : supprimer un client ne doit pas supprimer l'historique des réservations.
+     */
+    @OneToMany(mappedBy = "client", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    private List<Reservation> reservations = new ArrayList<>();
 }

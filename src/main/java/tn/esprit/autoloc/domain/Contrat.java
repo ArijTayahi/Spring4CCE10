@@ -4,12 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "contrat")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
-@ToString(exclude = "paiement")
-@EqualsAndHashCode(exclude = "paiement")
+@ToString(exclude = {"paiements", "reservation"})
+@EqualsAndHashCode(exclude = {"paiements", "reservation"})
 public class Contrat {
 
     @Id
@@ -31,14 +33,19 @@ public class Contrat {
      * Un contrat est lié à une réservation (côté propriétaire).
      * Génère la colonne FK idReservation dans la table contrat.
      */
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "idReservation", nullable = false, unique = true)
     private Reservation reservation;
 
     /**
-     * Un contrat est associé à un paiement unique (côté inverse).
-     * Le FK se trouve dans la table paiement.
+     * Un contrat regroupe plusieurs paiements (côté inverse, bidirectionnel).
+     * mappedBy pointe vers l'attribut "contrat" déclaré dans Paiement.
+     * cascade = ALL : persister/supprimer le contrat propage l'opération à ses paiements.
+     * orphanRemoval : retirer un paiement de la liste le supprime en base.
      */
-    @OneToOne(mappedBy = "contrat", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Paiement paiement;
+    @OneToMany(mappedBy = "contrat",
+               cascade = CascadeType.ALL,
+               orphanRemoval = true,
+               fetch = FetchType.LAZY)
+    private List<Paiement> paiements = new ArrayList<>();
 }

@@ -6,6 +6,8 @@ import lombok.*;
 @Entity
 @Table(name = "employe")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@ToString(exclude = "agence")
+@EqualsAndHashCode(exclude = "agence")
 public class Employe {
 
     @Id
@@ -24,8 +26,12 @@ public class Employe {
 
     // ── Relations ──────────────────────────────────────────────────────────
 
-    /** Un employé appartient à une agence (côté propriétaire). */
+    /**
+     * Un employé appartient à une agence (côté propriétaire).
+     * Hibernate génère la colonne FK idAgence dans la table employe.
+     * Pas de cascade : un employé survit à la suppression de son agence.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idAgence", nullable = false)
+    @JoinColumn(name = "idAgence")
     private Agence agence;
 }

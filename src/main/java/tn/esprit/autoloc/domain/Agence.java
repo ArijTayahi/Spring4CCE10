@@ -2,6 +2,7 @@ package tn.esprit.autoloc.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,11 +30,17 @@ public class Agence {
 
     // ── Relations ──────────────────────────────────────────────────────────
 
-    /** Une agence possède plusieurs véhicules. */
-    @OneToMany(mappedBy = "agence", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Vehicule> vehicules;
+    /**
+     * Une agence possède plusieurs véhicules (côté inverse).
+     * Pas de cascade : un véhicule survit à la suppression de son agence.
+     */
+    @OneToMany(mappedBy = "agence", fetch = FetchType.LAZY)
+    private List<Vehicule> vehicules = new ArrayList<>();
 
-    /** Une agence emploie plusieurs employés. */
-    @OneToMany(mappedBy = "agence", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Employe> employes;
+    /**
+     * Une agence emploie plusieurs employés (côté inverse).
+     * Pas de cascade : un employé survit à la suppression de son agence.
+     */
+    @OneToMany(mappedBy = "agence", fetch = FetchType.LAZY)
+    private List<Employe> employes = new ArrayList<>();
 }
