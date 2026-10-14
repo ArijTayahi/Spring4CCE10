@@ -1,5 +1,6 @@
 package tn.esprit.autoloc.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -35,13 +36,7 @@ public class Client {
     @Column(nullable = false)
     private LocalDate dateInscription;
 
-    // ── Relations ──────────────────────────────────────────────────────────
-
-    /**
-     * Un client peut effectuer plusieurs réservations (côté inverse).
-     * cascade = PERSIST : enregistrer un client enregistre ses nouvelles réservations.
-     * Pas de REMOVE : supprimer un client ne doit pas supprimer l'historique des réservations.
-     */
     @OneToMany(mappedBy = "client", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"client", "vehicule", "employe", "contrat"})
     private List<Reservation> reservations = new ArrayList<>();
 }

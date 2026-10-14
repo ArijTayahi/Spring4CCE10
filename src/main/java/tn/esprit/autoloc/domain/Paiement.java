@@ -1,5 +1,6 @@
 package tn.esprit.autoloc.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -26,13 +27,7 @@ public class Paiement {
     @Column(nullable = false, length = 20)
     private ModePaiement modePaiement;
 
-    // ── Relations ──────────────────────────────────────────────────────────
-
-    /**
-     * Un paiement est rattaché à un contrat (côté propriétaire).
-     * Hibernate génère automatiquement la colonne FK dans la table paiement
-     * à partir du nom de l'attribut et de la PK référencée (ex. contrat_id_contrat).
-     */
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("paiements")
     private Contrat contrat;
 }

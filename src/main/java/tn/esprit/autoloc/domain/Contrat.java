@@ -1,5 +1,6 @@
 package tn.esprit.autoloc.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -27,25 +28,15 @@ public class Contrat {
     @Column(nullable = false)
     private boolean valide;
 
-    // ── Relations ──────────────────────────────────────────────────────────
-
-    /**
-     * Un contrat est lié à une réservation (côté propriétaire).
-     * Génère la colonne FK idReservation dans la table contrat.
-     */
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "idReservation", nullable = false, unique = true)
+    @JsonIgnoreProperties({"contrat", "client", "vehicule", "employe"})
     private Reservation reservation;
 
-    /**
-     * Un contrat regroupe plusieurs paiements (côté inverse, bidirectionnel).
-     * mappedBy pointe vers l'attribut "contrat" déclaré dans Paiement.
-     * cascade = ALL : persister/supprimer le contrat propage l'opération à ses paiements.
-     * orphanRemoval : retirer un paiement de la liste le supprime en base.
-     */
     @OneToMany(mappedBy = "contrat",
                cascade = CascadeType.ALL,
                orphanRemoval = true,
                fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("contrat")
     private List<Paiement> paiements = new ArrayList<>();
 }

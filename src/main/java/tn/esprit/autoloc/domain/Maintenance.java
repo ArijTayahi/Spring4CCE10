@@ -1,5 +1,6 @@
 package tn.esprit.autoloc.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -24,14 +25,8 @@ public class Maintenance {
     @Column(length = 255)
     private String description;
 
-    // ── Relations ──────────────────────────────────────────────────────────
-
-    /**
-     * Une opération de maintenance concerne un véhicule précis (côté propriétaire).
-     * Hibernate génère la colonne FK idVehicule dans la table maintenance.
-     * Pas de cascade depuis ce côté : le véhicule gère la cascade PERSIST.
-     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idVehicule", nullable = false)
+    @JsonIgnoreProperties({"equipements", "maintenances", "agence"})
     private Vehicule vehicule;
 }

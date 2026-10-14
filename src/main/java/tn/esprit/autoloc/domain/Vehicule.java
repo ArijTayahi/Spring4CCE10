@@ -1,5 +1,6 @@
 package tn.esprit.autoloc.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -39,35 +40,21 @@ public class Vehicule {
     @Column(nullable = false, length = 20)
     private StatutVehicule statut;
 
-    // ── Relations ──────────────────────────────────────────────────────────
-
-    /**
-     * Un véhicule appartient à une agence (côté propriétaire).
-     * Hibernate génère la colonne FK idAgence dans la table vehicule.
-     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idAgence")
+    @JsonIgnoreProperties({"vehicules", "employes"})
     private Agence agence;
 
-    /**
-     * Un véhicule peut être équipé de plusieurs équipements (côté propriétaire).
-     * Utilisation d'un Set : les équipements sont partagés, l'ordre n'est pas garanti.
-     * Pas de cascade : les équipements sont des entités indépendantes et réutilisables.
-     */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "vehicule_equipement",
         joinColumns        = @JoinColumn(name = "idVehicule"),
         inverseJoinColumns = @JoinColumn(name = "idEquipement")
     )
+    @JsonIgnoreProperties("vehicules")
     private Set<Equipement> equipements = new HashSet<>();
 
-    /**
-     * Un véhicule peut subir plusieurs opérations de maintenance (côté inverse).
-     * cascade = PERSIST : créer un véhicule peut créer ses maintenances associées.
-     * Pas de REMOVE : une maintenance a une valeur historique et ne doit pas être
-     * supprimée en cascade.
-     */
     @OneToMany(mappedBy = "vehicule", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("vehicule")
     private List<Maintenance> maintenances = new ArrayList<>();
 }

@@ -1,5 +1,6 @@
 package tn.esprit.autoloc.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.ArrayList;
@@ -28,19 +29,11 @@ public class Agence {
     @Column(length = 20)
     private String telephone;
 
-    // ── Relations ──────────────────────────────────────────────────────────
-
-    /**
-     * Une agence possède plusieurs véhicules (côté inverse).
-     * Pas de cascade : un véhicule survit à la suppression de son agence.
-     */
     @OneToMany(mappedBy = "agence", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("agence")
     private List<Vehicule> vehicules = new ArrayList<>();
 
-    /**
-     * Une agence emploie plusieurs employés (côté inverse).
-     * Pas de cascade : un employé survit à la suppression de son agence.
-     */
     @OneToMany(mappedBy = "agence", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("agence")
     private List<Employe> employes = new ArrayList<>();
 }

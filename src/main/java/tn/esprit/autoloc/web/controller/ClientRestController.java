@@ -1,6 +1,5 @@
 package tn.esprit.autoloc.web.controller;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.autoloc.domain.Client;
 import tn.esprit.autoloc.service.IClientService;
@@ -9,10 +8,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/clients")
-@RequiredArgsConstructor
 public class ClientRestController {
 
     private final IClientService clientService;
+
+    public ClientRestController(IClientService clientService) {
+        this.clientService = clientService;
+    }
 
     @PostMapping
     public Client create(@RequestBody Client client) { return clientService.create(client); }

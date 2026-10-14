@@ -1,5 +1,6 @@
 package tn.esprit.autoloc.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.HashSet;
@@ -19,13 +20,7 @@ public class Equipement {
     @Column(nullable = false, unique = true, length = 100)
     private String libelle;
 
-    // ── Relations ──────────────────────────────────────────────────────────
-
-    /**
-     * Un équipement peut être associé à plusieurs véhicules (côté inverse).
-     * mappedBy pointe vers l'attribut "equipements" déclaré dans Vehicule.
-     * Pas de cascade : les équipements sont partagés entre véhicules.
-     */
     @ManyToMany(mappedBy = "equipements", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("equipements")
     private Set<Vehicule> vehicules = new HashSet<>();
 }

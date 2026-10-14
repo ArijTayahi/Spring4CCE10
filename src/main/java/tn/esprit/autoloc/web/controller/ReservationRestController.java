@@ -1,6 +1,5 @@
 package tn.esprit.autoloc.web.controller;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.autoloc.domain.Reservation;
 import tn.esprit.autoloc.service.IReservationService;
@@ -9,10 +8,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/reservations")
-@RequiredArgsConstructor
 public class ReservationRestController {
 
     private final IReservationService reservationService;
+
+    public ReservationRestController(IReservationService reservationService) {
+        this.reservationService = reservationService;
+    }
 
     @PostMapping
     public Reservation create(@RequestBody Reservation reservation) { return reservationService.create(reservation); }

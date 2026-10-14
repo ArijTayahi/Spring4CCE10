@@ -1,5 +1,6 @@
 package tn.esprit.autoloc.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -25,36 +26,22 @@ public class Reservation {
     @Column(nullable = false, length = 20)
     private StatutReservation statut;
 
-    // ── Relations ──────────────────────────────────────────────────────────
-
-    /**
-     * La réservation est faite par un client (côté propriétaire).
-     * Génère la colonne FK idClient dans la table reservation.
-     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idClient", nullable = false)
+    @JsonIgnoreProperties("reservations")
     private Client client;
 
-    /**
-     * La réservation concerne un véhicule (côté propriétaire).
-     * Génère la colonne FK idVehicule dans la table reservation.
-     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idVehicule", nullable = false)
+    @JsonIgnoreProperties({"equipements", "maintenances", "agence"})
     private Vehicule vehicule;
 
-    /**
-     * La réservation est traitée par un employé (côté propriétaire, optionnel).
-     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idEmploye")
+    @JsonIgnoreProperties("agence")
     private Employe employe;
 
-    /**
-     * Un contrat peut être établi pour cette réservation (côté inverse).
-     * Le FK idReservation se trouve dans la table contrat (côté propriétaire = Contrat).
-     * mappedBy pointe vers l'attribut "reservation" déclaré dans Contrat.
-     */
     @OneToOne(mappedBy = "reservation", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"reservation", "paiements"})
     private Contrat contrat;
 }
