@@ -2,15 +2,11 @@ package tn.esprit.autoloc.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "agence")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
-@ToString(exclude = {"vehicules", "employes"})
-@EqualsAndHashCode(exclude = {"vehicules", "employes"})
 public class Agence {
 
     @Id
@@ -36,4 +32,31 @@ public class Agence {
     @OneToMany(mappedBy = "agence", fetch = FetchType.LAZY)
     @JsonIgnoreProperties("agence")
     private List<Employe> employes = new ArrayList<>();
+
+    public Agence() {}
+
+    public Agence(Long idAgence, String nom, String ville, String adresse, String telephone, List<Vehicule> vehicules, List<Employe> employes) {
+        this.idAgence = idAgence;
+        this.nom = nom;
+        this.ville = ville;
+        this.adresse = adresse;
+        this.telephone = telephone;
+        this.vehicules = vehicules;
+        this.employes = employes;
+    }
+
+    public Long getIdAgence() { return idAgence; }
+    public void setIdAgence(Long idAgence) { this.idAgence = idAgence; }
+    public String getNom() { return nom; }
+    public void setNom(String nom) { this.nom = nom; }
+    public String getVille() { return ville; }
+    public void setVille(String ville) { this.ville = ville; }
+    public String getAdresse() { return adresse; }
+    public void setAdresse(String adresse) { this.adresse = adresse; }
+    public String getTelephone() { return telephone; }
+    public void setTelephone(String telephone) { this.telephone = telephone; }
+    public List<Vehicule> getVehicules() { return vehicules; }
+    public void setVehicules(List<Vehicule> vehicules) { this.vehicules = vehicules; }
+    public List<Employe> getEmployes() { return employes; }
+    public void setEmployes(List<Employe> employes) { this.employes = employes; }
 }
